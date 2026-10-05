@@ -5,6 +5,9 @@
   "engines": {
     "node": ">=18"
   },
+  "scripts": {
+    "start": "node server.js"
+  },
   "dependencies": {
     "stremio-addon-sdk": "^1.6.10"
   }
