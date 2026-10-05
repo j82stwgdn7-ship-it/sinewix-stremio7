@@ -24,7 +24,7 @@ builder.defineStreamHandler(async args => {
           name: "Addon Test",
           title: "ADDON TEST | Public sample video",
           url:
-            "https://distribution.bbb3d.renderfarming.net/video/mp4/bbb_sunflower_1080p_30fps_normal.mp4"
+            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
         }
       ]
     };
