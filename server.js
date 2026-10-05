@@ -24,7 +24,7 @@ builder.defineStreamHandler(async args => {
           name: "Addon Test",
           title: "ADDON TEST | Public sample video",
           url:
-            "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+            "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_1MB.mp4"
         }
       ]
     };
