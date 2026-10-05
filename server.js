@@ -2,9 +2,14 @@ const { addonBuilder, serveHTTP } = require("stremio-addon-sdk");
 
 const TMDB_API_KEY = process.env.TMDB_API_KEY;
 
+// Optional SineWix diagnostics configuration.
+// Values are never printed to logs and are not used to bypass authentication.
+const SINEWIX_API_BASE = process.env.SINEWIX_API_BASE || "";
+const SINEWIX_API_KEY = process.env.SINEWIX_API_KEY || "";
+
 const builder = new addonBuilder({
   id: "community.sinewix.stremio",
-  version: "1.1.0",
+  version: "1.1.1",
   name: "SineWix Türkçe",
   description: "TMDB ve yasal izleme sağlayıcılarını Stremio'ya getirir.",
   resources: ["stream"],
@@ -53,6 +58,25 @@ builder.defineStreamHandler(async args => {
   const id = String(args.id || "");
   const type = args.type === "series" ? "series" : "movie";
 
+  // Güvenli tanılama: gizli değerleri yazdırmadan Stremio isteğini göster.
+  console.log("[STREAM]", {
+    type,
+    id,
+    tmdbConfigured: Boolean(TMDB_API_KEY),
+    sinewixBaseConfigured: Boolean(SINEWIX_API_BASE),
+    sinewixKeyConfigured: Boolean(SINEWIX_API_KEY)
+  });
+
+  // Cinemeta series video ID formatı: tt...:season:episode
+  if (type === "series" && id.includes(":")) {
+    const parts = id.split(":");
+    console.log("[SERIES REQUEST]", {
+      imdbId: parts[0],
+      season: parts[1] || null,
+      episode: parts[2] || null
+    });
+  }
+
   // Big Buck Bunny test streamini koruyoruz.
   if (type === "movie" && id === "tt1254207") {
     let tmdbTitle = "TMDB bağlantısı bekleniyor";
@@ -83,6 +107,9 @@ builder.defineStreamHandler(async args => {
   }
 
   if (!TMDB_API_KEY || !id.startsWith("tt")) {
+    console.log("[STREAM] No TMDB lookup:", {
+      reason: !TMDB_API_KEY ? "TMDB_API_KEY missing" : "non-IMDb id"
+    });
     return { streams: [] };
   }
 
@@ -95,16 +122,27 @@ builder.defineStreamHandler(async args => {
         : found && Array.isArray(found.movie_results) && found.movie_results[0];
 
     if (!result) {
+      console.log("[STREAM] TMDB match not found:", id);
       return { streams: [] };
     }
 
     const tmdbId = result.id;
     const title = result.title || result.name || "İçerik";
 
+    console.log("[TMDB MATCH]", {
+      imdbId: id,
+      tmdbId,
+      title
+    });
+
     const providers = await getWatchProviders(type, tmdbId);
     const country = providers && providers.results && providers.results.TR;
 
     if (!country || !country.link) {
+      console.log("[PROVIDERS] No TR provider link:", {
+        imdbId: id,
+        tmdbId
+      });
       return { streams: [] };
     }
 
@@ -134,6 +172,8 @@ builder.defineStreamHandler(async args => {
         });
       }
     }
+
+    console.log("[PROVIDERS] TR streams:", streams.length);
 
     return { streams };
   } catch (error) {
