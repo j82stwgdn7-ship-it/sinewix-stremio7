@@ -1,0 +1,31 @@
+{
+  "id": "community.sinewix.stremio",
+  "version": "1.0.0",
+  "name": "SineWix Türkçe",
+  "description": "SineWix Türkçe dublaj kaynaklarını Stremio'ya getirir.",
+  "logo": "https://sinewix.com/favicon.ico",
+  "resources": [
+    {
+      "name": "stream",
+      "types": [
+        "movie",
+        "series"
+      ],
+      "idPrefixes": [
+        "tt"
+      ]
+    }
+  ],
+  "types": [
+    "movie",
+    "series"
+  ],
+  "idPrefixes": [
+    "tt"
+  ],
+  "catalogs": [],
+  "behaviorHints": {
+    "adult": false,
+    "p2p": false
+  }
+}
